@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   # Firebase Core for initializing Firebase in the Flutter app
   firebase_core: ^3.5.0
+  # Firebase Authentication for implementing user login, signup, and authentication
+  firebase_auth: ^5.3.0
 
 dev_dependencies:
   flutter_test:
