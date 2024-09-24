@@ -41,6 +41,13 @@ dependencies:
   firebase_auth: ^5.3.0
   # for getting files from user's device
   photo_manager: ^3.2.3
+  # Permission handler package to request and manage permissions in the app
+  permission_handler: ^11.3.1
+  # Image picker package to select images from the gallery or take photos using the camera
+  image_picker: ^1.1.2
+  # Firebase Storage package to upload, download, and manage files in Firebase Storage
+  firebase_storage: ^12.3.1
+
 
 dev_dependencies:
   flutter_test:
