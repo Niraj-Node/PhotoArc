@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:photoarc/utils/routes.dart';
 
@@ -61,6 +62,22 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  Future<void> _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      Navigator.of(context).pushReplacementNamed(Routes.signin);
+    } catch (e) {
+      _showSnackBar('Error signing out. Please try again.');
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 3),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,6 +87,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
           IconButton(
             icon: const Icon(Icons.camera_alt, size: 30),
             onPressed: () => _handleCameraAction(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, size: 30), // Sign-out icon
+            onPressed: _signOut,
           ),
         ],
       ),
