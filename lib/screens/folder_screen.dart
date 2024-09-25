@@ -12,22 +12,56 @@ class FolderScreen extends StatefulWidget {
 }
 
 class _FolderScreenState extends State<FolderScreen> {
+  static final Map<String, List<AssetEntity>> _cachedAssets = {};
   List<AssetEntity> assets = [];
+  int currentPage = 0;
+  bool _isLoading = true;
+  bool _isFetchingMore = false;
+  final int _pageSize = 100;
 
   @override
   void initState() {
     super.initState();
-    _fetchAssets(); // Fetch assets when the widget is initialized
+    _loadAssets();
+  }
+
+  Future<void> _loadAssets() async {
+    final folderId = widget.folder.id;
+
+    // Check if assets are already cached
+    if (_cachedAssets.containsKey(folderId)) {
+      assets = _cachedAssets[folderId]!;
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      await _fetchAssets(); // Fetch if not cached
+    }
   }
 
   Future<void> _fetchAssets() async {
-    // Fetch assets from the selected folder
-    assets = await widget.folder.getAssetListRange(
-      start: 0,
-      end: 100000, // Adjust the end value based on your needs
-    );
+    final folderId = widget.folder.id;
 
-    setState(() {});
+    final newAssets = await widget.folder.getAssetListPaged(
+      page: currentPage,
+      size: _pageSize,
+    );
+    assets.addAll(newAssets);
+    _cachedAssets[folderId] = assets;
+
+    setState(() {
+      _isLoading = false;
+      _isFetchingMore = false;
+    });
+  }
+
+  void _loadMore() {
+    if (_isFetchingMore) return;
+    setState(() {
+      _isFetchingMore = true;
+      currentPage++;
+    });
+    _fetchAssets();
   }
 
   @override
@@ -36,20 +70,26 @@ class _FolderScreenState extends State<FolderScreen> {
       appBar: AppBar(
         title: Text(widget.folder.name),
       ),
-      body: assets.isEmpty
-          ? const Center(child: CircularProgressIndicator()) // Show a loading indicator while fetching
-          : GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
-        ),
-        itemCount: assets.length,
-        itemBuilder: (_, index) {
-          return AssetThumbnail(
-            asset: assets[index],
-          );
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && !_isFetchingMore) {
+            _loadMore(); // Load more assets when scroll reaches the bottom
+          }
+          return false;
         },
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 4.0,
+            mainAxisSpacing: 4.0,
+          ),
+          itemCount: assets.length,
+          itemBuilder: (_, index) {
+            return AssetThumbnail(asset: assets[index]);
+          },
+        ),
       ),
     );
   }
