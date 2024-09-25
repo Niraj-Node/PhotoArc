@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:photoarc/widgets/asset_thumbnail.dart';
 
 class FolderScreen extends StatefulWidget {
@@ -49,22 +50,58 @@ class _FolderScreenState extends State<FolderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Group assets by creation date
+    final groupedAssets = <String, List<AssetEntity>>{};
+    for (final asset in assets) {
+      final creationDate = asset.createDateTime; // Already a DateTime object
+      final dateKey = DateFormat('yyyy-MM-dd').format(creationDate);
+
+      if (groupedAssets[dateKey] == null) {
+        groupedAssets[dateKey] = [];
+      }
+      groupedAssets[dateKey]!.add(asset);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.folder.name),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator()) // Show loading indicator
-          : GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
-        ),
-        itemCount: assets.length,
-        itemBuilder: (_, index) {
-          return AssetThumbnail(asset: assets[index]);
-        },
+          : ListView(
+        children: groupedAssets.entries.map((entry) {
+          final date = entry.key;
+          final assetsList = entry.value;
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  date,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 4.0,
+                  mainAxisSpacing: 4.0,
+                ),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: assetsList.length,
+                itemBuilder: (_, index) {
+                  return AssetThumbnail(asset: assetsList[index]);
+                },
+              ),
+            ],
+          );
+        }).toList(),
       ),
     );
   }
