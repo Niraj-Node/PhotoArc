@@ -104,16 +104,16 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
         ],
       ),
       body: _imageUrls.isEmpty
-          ? Center(
+          ? const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
+            Text(
               'No images found.',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 10),
-            const Text(
+            SizedBox(height: 10),
+            Text(
               'Please upload images to see them here.',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
