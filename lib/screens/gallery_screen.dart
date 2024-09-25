@@ -47,6 +47,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
     Navigator.of(context).pushNamed(Routes.camera);
   }
 
+  Future<void> _handleCloudImagesAction(BuildContext context) async {
+    // Navigate to the CloudImagesScreen when the cloud icon is tapped
+    Navigator.of(context).pushNamed(Routes.cloudImages);
+  }
+
   Future<void> _signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -74,6 +79,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
           IconButton(
             icon: const Icon(Icons.camera_alt, size: 30),
             onPressed: () => _handleCameraAction(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.cloud, size: 30),
+            onPressed: () => _handleCloudImagesAction(context), // Handle cloud icon tap
           ),
           IconButton(
             icon: const Icon(Icons.logout, size: 30), // Sign-out icon

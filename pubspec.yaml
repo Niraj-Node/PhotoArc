@@ -53,6 +53,8 @@ dependencies:
   video_player: ^2.9.1
   # provides controls for playing videos
   chewie: ^1.8.3
+  # This will automatically cache images the first time they are loaded and reuse the cached version the next time, reducing network usage.
+  cached_network_image: ^3.2.3
 
 
 dev_dependencies:
