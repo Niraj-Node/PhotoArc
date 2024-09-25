@@ -13,6 +13,8 @@ class CloudImagesScreen extends StatefulWidget {
 
 class _CloudImagesScreenState extends State<CloudImagesScreen> {
   List<String> _imageUrls = [];
+  List<String> _imagePaths = []; // Store image paths for deletion
+  Set<int> _selectedIndices = {}; // Track selected images
 
   @override
   void initState() {
@@ -30,9 +32,54 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
     final storageRef = FirebaseStorage.instance.ref().child('users/$userId/images');
     final result = await storageRef.listAll();
 
-    final urls = await Future.wait(result.items.map((item) => item.getDownloadURL()));
+    final urls = await Future.wait(result.items.map((item) async {
+      final downloadUrl = await item.getDownloadURL();
+      _imagePaths.add(item.fullPath); // Store the image path for deletion
+      return downloadUrl;
+    }));
+
     setState(() {
       _imageUrls = urls;
+    });
+  }
+
+  Future<void> _deleteSelectedImages() async {
+    for (var index in _selectedIndices) {
+      final path = _imagePaths[index];
+      try {
+        await FirebaseStorage.instance.ref(path).delete(); // Delete from Firebase Storage
+      } catch (e) {
+        _showSnackBar('Error deleting image: $e');
+      }
+    }
+
+    // Create new lists excluding the deleted indices
+    final newImageUrls = <String>[];
+    final newImagePaths = <String>[];
+
+    for (int i = 0; i < _imageUrls.length; i++) {
+      if (!_selectedIndices.contains(i)) {
+        newImageUrls.add(_imageUrls[i]);
+        newImagePaths.add(_imagePaths[i]);
+      }
+    }
+
+    setState(() {
+      _imageUrls = newImageUrls;
+      _imagePaths = newImagePaths;
+      _selectedIndices.clear();
+    });
+
+    _showSnackBar('Selected images deleted successfully.');
+  }
+
+  void _toggleSelection(int index) {
+    setState(() {
+      if (_selectedIndices.contains(index)) {
+        _selectedIndices.remove(index);
+      } else {
+        _selectedIndices.add(index);
+      }
     });
   }
 
@@ -48,9 +95,32 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Uploaded Images'),
+        actions: [
+          if (_selectedIndices.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: _deleteSelectedImages,
+            ),
+        ],
       ),
       body: _imageUrls.isEmpty
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'No images found.',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Please upload images to see them here.',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      )
           : GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
@@ -59,6 +129,7 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
         ),
         itemCount: _imageUrls.length,
         itemBuilder: (_, index) {
+          final isSelected = _selectedIndices.contains(index);
           return GestureDetector(
             onTap: () {
               // Navigate to the full-screen image viewer when an image is tapped
@@ -69,11 +140,22 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
                 ),
               );
             },
-            child: CachedNetworkImage(
-              imageUrl: _imageUrls[index],
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+            onLongPress: () => _toggleSelection(index), // Select on long press
+            child: Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: _imageUrls[index],
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                if (isSelected) // Show selection overlay
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                    alignment: Alignment.center,
+                    child: const Icon(Icons.check, color: Colors.white),
+                  ),
+              ],
             ),
           );
         },
