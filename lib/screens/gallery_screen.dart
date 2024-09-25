@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:photoarc/widgets/folder_grid.dart';
 import 'package:photoarc/utils/routes.dart';
 
 class GalleryScreen extends StatefulWidget {
@@ -11,10 +13,24 @@ class GalleryScreen extends StatefulWidget {
 }
 
 class _GalleryScreenState extends State<GalleryScreen> {
+  List<AssetPathEntity>? _folders;
 
   @override
   void initState() {
     super.initState();
+    _loadFolders(); // Load folders when the widget is initialized
+  }
+
+  Future<void> _loadFolders() async {
+    // retrieves a list of AssetPathEntity objects
+    // AssetPathEntity is a class from the photo_manager package that represents a folder or album on the device
+    // Each AssetPathEntity object contains several properties
+    // like id, name, assetCount, type,
+    final result = await PhotoManager.getAssetPathList(
+        type: RequestType.common);
+    setState(() {
+      _folders = result;
+    });
   }
 
   Future<void> _handleCameraAction(BuildContext context) async {
@@ -23,7 +39,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
     if (!cameraStatus.isGranted) {
       final result = await Permission.camera.request();
       if (!result.isGranted) {
-        _showPermissionDeniedDialog();
         return;
       }
     }
@@ -32,41 +47,13 @@ class _GalleryScreenState extends State<GalleryScreen> {
     Navigator.of(context).pushNamed(Routes.camera);
   }
 
-  void _showPermissionDeniedDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent dismissing by tapping outside
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Camera Permission Required'),
-          content: const Text(
-            'We need access to your camera to take pictures. Please grant camera permission.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('OK'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                openAppSettings(); // Open app settings for the user to change permissions
-              },
-              child: const Text('Open Settings'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future<void> _signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
-      Navigator.of(context).pushReplacementNamed(Routes.signin);
+      // Optionally, navigate to the login screen or another screen after sign out
+      Navigator.of(context).pushReplacementNamed(Routes.signin); // Adjust this to your login route
     } catch (e) {
+      print('Error signing out: $e');
       _showSnackBar('Error signing out. Please try again.');
     }
   }
@@ -82,7 +69,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gallery'),
+        title: const Text('PhotoArc'),
         actions: [
           IconButton(
             icon: const Icon(Icons.camera_alt, size: 30),
@@ -94,6 +81,23 @@ class _GalleryScreenState extends State<GalleryScreen> {
           ),
         ],
       ),
+      body: _folders == null
+          ? const Center(child: CircularProgressIndicator())
+          : FolderGrid(
+        folders: _folders!,
+        onFolderTap: _onFolderTap,
+      ),
+    );
+  }
+
+  // This callback is provided to the grid to handle folder taps.
+  // It is passed down to each folder card. The function is executed
+  // when a folder card is tapped, navigating to the FolderScreen
+  // with the selected folder's AssetPathEntity.
+  void _onFolderTap(AssetPathEntity folder) {
+    Navigator.of(context).pushNamed(
+      Routes.folder,
+      arguments: folder,
     );
   }
 }

@@ -47,6 +47,12 @@ dependencies:
   image_picker: ^1.1.2
   # Firebase Storage package to upload, download, and manage files in Firebase Storage
   firebase_storage: ^12.3.1
+  # add ability to zoom images
+  photo_view: ^0.15.0
+  # for being able to play videos
+  video_player: ^2.9.1
+  # provides controls for playing videos
+  chewie: ^1.8.3
 
 
 dev_dependencies:
