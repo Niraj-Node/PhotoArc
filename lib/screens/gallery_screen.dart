@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:photoarc/utils/routes.dart';
-import 'package:photoarc/widgets/folder_grid.dart';
+import 'package:photoarc/widgets/images/local_images/folder_grid.dart';
 import 'package:photoarc/widgets/navbar.dart';
 import 'package:photoarc/widgets/appbar_gradient.dart';
 

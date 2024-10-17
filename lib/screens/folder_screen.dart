@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:intl/intl.dart';
-import 'package:photoarc/widgets/asset_thumbnail.dart';
+import 'package:photoarc/widgets/images/local_images/asset_thumbnail.dart';
 
 class FolderScreen extends StatefulWidget {
   final AssetPathEntity folder; // Receive the folder as a parameter
