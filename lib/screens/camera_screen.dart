@@ -4,6 +4,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
+import 'package:photoarc/widgets/navbar.dart';
+import 'package:photoarc/widgets/images/upload_image_card.dart';
+import 'package:photoarc/utils/camera_utils.dart'; // Import the utility functions
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
@@ -16,12 +19,12 @@ class _CameraScreenState extends State<CameraScreen> {
   final ImagePicker _picker = ImagePicker();
   File? _imageFile;
   bool _isUploading = false;
-  double _uploadProgress = 0; // To track upload progress
+  double _uploadProgress = 0;
 
   @override
   void initState() {
     super.initState();
-    _takePicture();
+    _takePicture(); // Automatically open camera on screen load
   }
 
   Future<void> _takePicture() async {
@@ -30,68 +33,52 @@ class _CameraScreenState extends State<CameraScreen> {
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
-        _isUploading = true;
-        _uploadProgress = 0; // Reset progress
       });
-      await _uploadImageToFirebase(_imageFile!);
     } else {
-      _showSnackBar('No image was captured.');
+      showErrorSnackbar(context, 'No image was captured.');
     }
   }
 
-  String? _getCurrentUserId() {
-    final user = FirebaseAuth.instance.currentUser;
+  Future<void> _uploadImage() async {
+    if (_imageFile == null) return;
 
-    if (user != null) {
-      return user.uid;
-    } else {
-      print('No user is currently logged in.');
-      return null;
-    }
-  }
+    setState(() {
+      _isUploading = true;
+      _uploadProgress = 0;
+    });
 
-  Future<void> _uploadImageToFirebase(File imageFile) async {
     try {
       final storageRef = FirebaseStorage.instance.ref();
-      final userId = _getCurrentUserId();
+      final userId = FirebaseAuth.instance.currentUser?.uid;
 
       if (userId != null) {
-        final fileName = path.basename(imageFile.path);
+        final fileName = path.basename(_imageFile!.path);
         final fileRef = storageRef.child('users/$userId/images/$fileName');
 
-        final uploadTask = fileRef.putFile(imageFile);
+        final uploadTask = fileRef.putFile(_imageFile!);
 
-        // Monitor the upload progress
         uploadTask.snapshotEvents.listen((taskSnapshot) {
           setState(() {
-            _uploadProgress = (taskSnapshot.bytesTransferred.toDouble() / taskSnapshot.totalBytes.toDouble()) * 100;
+            _uploadProgress = (taskSnapshot.bytesTransferred.toDouble() /
+                taskSnapshot.totalBytes.toDouble()) *
+                100;
           });
         });
 
         await uploadTask;
 
-        // Get the download URL of the uploaded file
         final downloadUrl = await fileRef.getDownloadURL();
-        print('Uploaded image URL: $downloadUrl');
-        _showSnackBar('Upload successful!');
+        showPrimarySnackbar(context, 'Upload successful!');
       } else {
-        _showSnackBar('Unable to upload image: No user ID found.');
+        showErrorSnackbar(context, 'No user ID found.');
       }
     } catch (e) {
-      print('Error uploading image: $e');
-      _showSnackBar('Error uploading image: $e');
+      showErrorSnackbar(context, 'Error uploading image: $e');
     } finally {
       setState(() {
         _isUploading = false;
       });
     }
-  }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(message),
-      duration: const Duration(seconds: 3),
-    ));
   }
 
   @override
@@ -100,20 +87,27 @@ class _CameraScreenState extends State<CameraScreen> {
       appBar: AppBar(
         title: const Text('Capture Photo'),
       ),
+      bottomNavigationBar: NavBar(
+        selectedTab: 1,
+        primaryColor: const Color(0xff4338CA),
+      ),
       body: Center(
         child: _isUploading
             ? Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(value: _uploadProgress / 100), // Show progress as a percentage
+            CircularProgressIndicator(value: _uploadProgress / 100),
             const SizedBox(height: 20),
-            Text('${_uploadProgress.toStringAsFixed(0)}%'), // Display percentage
+            Text('${_uploadProgress.toStringAsFixed(0)}%'),
           ],
         )
             : (_imageFile != null
-            ? Image.file(
-          _imageFile!,
-          fit: BoxFit.cover,
+            ? UploadImageCard(
+          imageFile: _imageFile!,
+          onRetake: _takePicture,
+          onUpload: _uploadImage,
+          onShare: () => shareImage(context, _imageFile), // Using utility function
+          onDownload: () => downloadImage(context, _imageFile), // Using utility function
         )
             : const Text('No image selected.')),
       ),

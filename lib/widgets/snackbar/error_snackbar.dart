@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-ErrorSnackbar(context, String text ) {
+void ErrorSnackbar(context, String text ) {
   // This should be called by an on pressed function
   // Example:
   // Button(
