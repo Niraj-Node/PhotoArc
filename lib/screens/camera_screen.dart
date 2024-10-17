@@ -6,7 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
 import 'package:photoarc/widgets/navbar.dart';
 import 'package:photoarc/widgets/images/upload_image_card.dart';
-import 'package:photoarc/utils/camera_utils.dart'; // Import the utility functions
+import 'package:photoarc/utils/snackbar_utils.dart';
+import 'package:photoarc/utils/file_utils.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
