@@ -59,10 +59,14 @@ class AssetThumbnail extends StatelessWidget {
               if (asset.type == AssetType.video)
                 Center(
                   child: Container(
-                    color: Colors.black45,
+                    decoration: const BoxDecoration(
+                      color: Colors.black54,
+                      shape: BoxShape.circle,
+                    ),
                     child: const Icon(
-                      Icons.play_arrow,
+                      Icons.play_circle_fill,
                       color: Colors.white,
+                      size: 50.0,
                     ),
                   ),
                 ),
