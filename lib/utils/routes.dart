@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:photoarc/screens/home_screen.dart';
+import 'package:photoarc/screens/permission_screen.dart';
 import 'package:photoarc/screens/signin_screen.dart';
 import 'package:photoarc/screens/signup_screen.dart';
 import 'package:photoarc/screens/gallery_screen.dart';
