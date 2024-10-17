@@ -20,7 +20,7 @@ class Routes {
   // Map of routes and their corresponding widget builders
   static Map<String, WidgetBuilder> getRoutes() {
     return {
-      home: (context) => const HomeScreen(),
+      home: (context) => const PermissionScreen(),
       signin: (context) => const SignInScreen(),
       signup: (context) => const SignUpScreen(),
       gallery: (context) => const GalleryScreen(),
