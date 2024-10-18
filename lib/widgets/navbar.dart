@@ -37,11 +37,11 @@ class _NavBarState extends State<NavBar> {
     }
 
     // If the camera permission is granted, navigate to the CameraScreen
-    Navigator.of(context).pushNamed(Routes.camera);
+    Navigator.of(context).pushReplacementNamed(Routes.camera);
   }
 
   Future<void> _handleCloudImagesAction(BuildContext context) async {
-    Navigator.of(context).pushNamed(Routes.cloudImages);
+    Navigator.of(context).pushReplacementNamed(Routes.cloudImages);
   }
 
   Future<void> _signOut() async {

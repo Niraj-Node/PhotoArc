@@ -20,17 +20,23 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
     required this.actions,
     this.titleColor = Colors.white,
     this.elevation = 4.0,
-    this.centerTitle = true,
+    this.centerTitle = false, // Set to false to align title to the left
   })  : preferredSize = const Size.fromHeight(56.0),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title, style: TextStyle(color: titleColor)),
+      title: Align(
+        alignment: Alignment.centerLeft, // Align the title to the left
+        child: Text(
+          title,
+          style: TextStyle(color: titleColor),
+        ),
+      ),
       actions: actions,
       elevation: elevation,
-      centerTitle: centerTitle,
+      centerTitle: false, // Ensure this is false to keep title left-aligned
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(

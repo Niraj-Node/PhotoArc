@@ -9,6 +9,8 @@ import 'package:photoarc/widgets/images/upload_image_card.dart';
 import 'package:photoarc/utils/snackbar_utils.dart';
 import 'package:photoarc/utils/file_utils.dart';
 
+import '../widgets/appbar_gradient.dart';
+
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});
 
@@ -85,8 +87,10 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Capture Photo'),
+      appBar: const AppBarGradient(
+        title: 'PhotoArc',
+        primaryColor: Color(0xff4338CA),
+        secondaryColor: Color(0xff6D28D9),
       ),
       bottomNavigationBar: NavBar(
         selectedTab: 1,
