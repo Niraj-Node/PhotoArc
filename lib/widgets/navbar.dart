@@ -5,6 +5,8 @@ import 'package:photoarc/utils/routes.dart';
 import 'package:photoarc/widgets/snackbar/error_snackbar.dart';
 import 'package:photoarc/widgets/snackbar/primary_snackbar.dart';
 
+import 'dialog_box.dart';
+
 class NavBar extends StatefulWidget {
   final Color primaryColor;
   final Color secondaryColor;
@@ -42,6 +44,29 @@ class _NavBarState extends State<NavBar> {
 
   Future<void> _handleCloudImagesAction(BuildContext context) async {
     Navigator.of(context).pushReplacementNamed(Routes.cloudImages);
+  }
+
+  Future<void> _confirmSignOut() async {
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return DialogBox(
+          title: "Confirm Logout",
+          subtitle: "Are you sure you want to log out?",
+          primaryButtonText: "Yes",
+          secondaryButtonText: "No",
+          primaryButtonAction: () async {
+            Navigator.of(context).pop(); // Close the dialog
+            await _signOut();
+          },
+          secondaryButtonAction: () {
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          primaryColor: Colors.redAccent,
+        );
+      },
+    );
   }
 
   Future<void> _signOut() async {
@@ -116,10 +141,10 @@ class _NavBarState extends State<NavBar> {
                   selectedColor: primaryColor,
                 ),
                 NavBarIcon(
-                  text: "Log Out",
+                  text: "Sign Out",
                   icon: Icons.logout,
                   selected: widget.selectedTab == 3,
-                  onPressed: () => _signOut(),
+                  onPressed: () => _confirmSignOut(),
                   selectedColor: primaryColor,
                   defaultColor: secondaryColor,
                 ),
