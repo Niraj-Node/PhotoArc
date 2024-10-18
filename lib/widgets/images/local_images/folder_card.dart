@@ -41,7 +41,7 @@ class FolderCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: AssetThumbnail(asset: recentAsset, onTapCallback: onTap),
+                    child: AssetThumbnail(asset: recentAsset, onTap: onTap),
                   ),
                   _buildGradient(),
                   _buildFolderInfo(context),

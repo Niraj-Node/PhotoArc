@@ -48,10 +48,52 @@ Future<void> downloadImage(BuildContext context, File? imageFile) async {
 
       showPrimarySnackbar(context, 'Image saved to: Download/Photoarc');
     } catch (e) {
-      print(e);
       showErrorSnackbar(context, 'Error downloading image: $e');
     }
   } else {
     showErrorSnackbar(context, 'No image to download.');
   }
 }
+
+// Future<void> downloadImage(BuildContext context, File? imageFile) async {
+//   if (imageFile != null) {
+//     try {
+//       // Read the image data
+//       final Uint8List? imageBytes = await imageFile.readAsBytes();
+//       final imageName = path.basename(imageFile.path);
+//
+//       if (imageBytes != null) {
+//         // Get the external storage directory
+//         final Directory? externalStorageDir = await getExternalStorageDirectory();
+//
+//         // Construct the 'Pictures/Photoarc' path
+//         const String photoarcFolderPath = "/storage/emulated/0/Pictures/Photoarc";
+//
+//         // Create the 'Photoarc' folder if it doesn't exist
+//         final Directory photoarcDir = Directory(photoarcFolderPath);
+//         if (!await photoarcDir.exists()) {
+//           await photoarcDir.create(recursive: true);
+//         }
+//
+//         // Define the path where the image will be saved
+//         final String savePath = path.join(photoarcDir.path, imageName);
+//         final File savedImage = await File(savePath).writeAsBytes(imageBytes);
+//
+//         showPrimarySnackbar(context, 'Image saved to: Pictures');
+//
+//         // Save the image to the gallery (optional)
+//         await PhotoManager.editor.saveImage(
+//           imageBytes,
+//           filename: imageName,
+//         );
+//       } else {
+//         showErrorSnackbar(context, 'Error reading image file.');
+//       }
+//     } catch (e) {
+//       print(e);
+//       showErrorSnackbar(context, 'Error downloading image: $e');
+//     }
+//   } else {
+//     showErrorSnackbar(context, 'No image to download.');
+//   }
+// }

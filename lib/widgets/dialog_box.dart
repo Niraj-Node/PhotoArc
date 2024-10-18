@@ -94,7 +94,7 @@ class DialogBox extends StatelessWidget {
                   text: secondaryButtonText,
                   onPressed: secondaryButtonAction,
                   color: invertSecondaryButton ? accentColor : Colors.white,
-                  textColor: invertSecondaryButton ? Colors.white : Colors.white,
+                  textColor: invertSecondaryButton ? Colors.white : Colors.black,
                   borderColor: primaryColor,
                 ),
               ],
