@@ -5,9 +5,9 @@ import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
   const VideoView({
-    Key? key,
+    super.key,
     required this.videoFile,
-  }) : super(key: key);
+  });
 
   final Future<File?> videoFile;
 
@@ -32,6 +32,8 @@ class _VideoViewState extends State<VideoView> {
       videoPlayerController: _videoPlayerController,
       autoPlay: true,
       looping: true,
+      allowFullScreen: true,
+      allowMuting: true,
     );
 
     videoPlayerWidget = Chewie(
@@ -55,20 +57,57 @@ class _VideoViewState extends State<VideoView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: Colors.black,
       body: initialized
-      // If the video is initialized, display it
-          ? Scaffold(
-        body: Center(
-          child: AspectRatio(
-            aspectRatio: _videoPlayerController.value.aspectRatio,
-            child: videoPlayerWidget,
+          ? Stack(
+        children: [
+          Center(
+            child: AspectRatio(
+              aspectRatio: _videoPlayerController.value.aspectRatio,
+              child: videoPlayerWidget,
+            ),
           ),
-        ),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+          Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const SizedBox(height: 20),
+                  _buildSeekBar(),
+                ],
+              ),
+            ),
+          ),
+        ],
       )
-      // If the video is not yet initialized, display a spinner
           : const Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSeekBar() {
+    return VideoProgressIndicator(
+      _videoPlayerController,
+      allowScrubbing: true,
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      colors: VideoProgressColors(
+        playedColor: Colors.blueAccent,
+        backgroundColor: Colors.white.withOpacity(0.3),
       ),
     );
   }
