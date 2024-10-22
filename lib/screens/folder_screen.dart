@@ -160,7 +160,7 @@ class _FolderScreenState extends State<FolderScreen> {
       MaterialPageRoute(
         builder: (_) {
           if (asset.type == AssetType.image) {
-            return ImageView(imageFile: asset.file);
+            return ImageView(assetId: asset.id);
           } else {
             return VideoView(videoFile: asset.file);
           }
