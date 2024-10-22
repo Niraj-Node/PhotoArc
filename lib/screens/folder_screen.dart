@@ -39,13 +39,40 @@ class _FolderScreenState extends State<FolderScreen> {
 
     // Check if assets for this folder are already cached
     if (_cachedAssets.containsKey(folderId)) {
-      assets = _cachedAssets[folderId]!;
+      final cachedAssets = _cachedAssets[folderId]!;
+      setState(() {
+        assets = cachedAssets;
+      });
+
+      final currentAssets = await widget.folder.getAssetListRange(start: 0, end: 100000);
+      final isDifferent = !_areAssetsEqual(cachedAssets, currentAssets);
+      // If they are different, update the cache and re-render
+      if (isDifferent) {
+        assets = currentAssets;
+        _cachedAssets[folderId] = currentAssets; // Update the cache
+        setState(() {}); // Re-render the component
+      }
       setState(() {
         _isLoading = false;
       });
     } else {
-      await _fetchAssets(); // Fetch assets if not cached
+      // If not cached, fetch the assets
+      await _fetchAssets();
     }
+  }
+
+  bool _areAssetsEqual(List<AssetEntity> cachedAssets, List<AssetEntity> currentAssets) {
+    if (cachedAssets.length != currentAssets.length) {
+      return false;
+    }
+
+    for (int i = 0; i < cachedAssets.length; i++) {
+      if (cachedAssets[i].id != currentAssets[i].id) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Future<void> _fetchAssets() async {
@@ -154,8 +181,8 @@ class _FolderScreenState extends State<FolderScreen> {
     }
   }
 
-  void _openImage(AssetEntity asset) {
-    Navigator.push(
+  Future<void> _openImage(AssetEntity asset) async {
+    final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) {
@@ -167,6 +194,11 @@ class _FolderScreenState extends State<FolderScreen> {
         },
       ),
     );
+
+    // If result is true (indicating that an image was deleted), reload the assets
+    if (result == true) {
+      _loadAssets();
+    }
   }
 
   @override
