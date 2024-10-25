@@ -1,15 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
-import 'package:photoarc/widgets/navbar.dart';
-import 'package:photoarc/widgets/images/upload_image_card.dart';
-import 'package:photoarc/utils/snackbar_utils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:photoarc/utils/file_utils.dart';
-
-import '../widgets/appbar_gradient.dart';
+import 'package:photoarc/widgets/appbar_gradient.dart';
+import 'package:photoarc/widgets/images/cloud_images/upload_image_card.dart';
+import 'package:photoarc/widgets/navbar.dart';
+import 'package:photoarc/utils/snackbar_utils.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({super.key});

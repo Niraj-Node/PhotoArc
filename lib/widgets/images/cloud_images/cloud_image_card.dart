@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class ImageCard extends StatelessWidget {
+class CloudImageCard extends StatelessWidget {
   final String imageUrl;
   final DateTime uploadTime;
   final bool isSelected;
   final Function() onTap;
   final Function() onLongPress;
 
-  const ImageCard({
+  const CloudImageCard({
     super.key,
     required this.imageUrl,
     required this.uploadTime,

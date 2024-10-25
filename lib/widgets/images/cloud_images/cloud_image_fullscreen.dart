@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class FullScreenImage extends StatelessWidget {
+class CloudImageFullScreen extends StatelessWidget {
   final String imageUrl;
 
-  const FullScreenImage({super.key, required this.imageUrl});
+  const CloudImageFullScreen({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

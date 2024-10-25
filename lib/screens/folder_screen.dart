@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:intl/intl.dart';
-import '../widgets/appbar_gradient_custom.dart';
+import 'package:photoarc/widgets/appbar_gradient_custom.dart';
 import 'package:photoarc/widgets/images/local_images/asset_thumbnail.dart';
+import 'package:photoarc/widgets/images/local_images/image_view.dart';
+import 'package:photoarc/widgets/images/local_images/video_view.dart';
 import 'package:photoarc/widgets/navbar.dart';
-import '../widgets/dialog_box.dart';
-import '../utils/snackbar_utils.dart';
-import '../widgets/image_view.dart';
-import '../widgets/video_view.dart';
+import 'package:photoarc/widgets/dialog_box.dart';
+import 'package:photoarc/utils/snackbar_utils.dart';
 
 class FolderScreen extends StatefulWidget {
   final AssetPathEntity folder;

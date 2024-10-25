@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' show User;
 import 'package:photoarc/utils/auth_service.dart';
 import 'package:photoarc/utils/routes.dart';
-
-import '../widgets/appbar_gradient.dart';
-import '../widgets/buttons/loading_button.dart';
-import '../widgets/buttons/splash_button.dart';
-import '../widgets/inputs/email_input.dart';
-import '../widgets/inputs/password_inout.dart';
-import '../widgets/snackbar/error_snackbar.dart';
-import '../widgets/snackbar/primary_snackbar.dart';
+import 'package:photoarc/widgets/appbar_gradient.dart';
+import 'package:photoarc/widgets/inputs/email_input.dart';
+import 'package:photoarc/widgets/inputs/password_input.dart';
+import 'package:photoarc/widgets/buttons/loading_button.dart';
+import 'package:photoarc/widgets/buttons/splash_button.dart';
+import 'package:photoarc/widgets/snackbar/error_snackbar.dart';
+import 'package:photoarc/widgets/snackbar/primary_snackbar.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

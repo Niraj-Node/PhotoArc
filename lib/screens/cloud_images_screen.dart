@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
-import '../utils/snackbar_utils.dart';
-import '../widgets/images/cloud_images/fullscreen_image.dart';
-import '../widgets/images/cloud_images/image_card.dart';
-import '../widgets/dialog_box.dart';
-import '../widgets/appbar_gradient_custom.dart';
-import '../widgets/navbar.dart';
+import 'package:photoarc/utils/snackbar_utils.dart';
+import 'package:photoarc/widgets/appbar_gradient_custom.dart';
+import 'package:photoarc/widgets/images/cloud_images/cloud_image_card.dart';
+import 'package:photoarc/widgets/images/cloud_images/cloud_image_fullscreen.dart';
+import 'package:photoarc/widgets/dialog_box.dart';
+import 'package:photoarc/widgets/navbar.dart';
 
 class CloudImagesScreen extends StatefulWidget {
   const CloudImagesScreen({super.key});
@@ -222,7 +222,7 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
               final imageData = _imageData[index];
               final isSelected = _selectedIndices.contains(index);
 
-              return ImageCard(
+              return CloudImageCard(
                 imageUrl: imageData['url'],
                 uploadTime: imageData['uploadTime'],
                 isSelected: isSelected,
@@ -231,7 +231,7 @@ class _CloudImagesScreenState extends State<CloudImagesScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        FullScreenImage(imageUrl: imageData['url']),
+                        CloudImageFullScreen(imageUrl: imageData['url']),
                   ),
                 )
                     : _toggleSelection(index),

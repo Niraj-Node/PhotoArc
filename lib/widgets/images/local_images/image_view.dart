@@ -1,15 +1,15 @@
 import 'dart:typed_data';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:photoarc/utils/file_utils.dart';
 import 'package:photoarc/utils/snackbar_utils.dart';
-import 'dialog_box.dart';
+import 'package:photoarc/widgets/dialog_box.dart';
 
 class ImageView extends StatelessWidget {
   final String assetId;
